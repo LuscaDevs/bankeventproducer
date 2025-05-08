@@ -1,7 +1,6 @@
 package com.luscadevs.bankeventproducer.model;
 
 import java.util.Date;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +9,9 @@ import lombok.Setter;
 public class Instancia {
     private String idInstancia;
     private String idJornada;
+    private int idProduto;
     private Date dataCriacao;
     private Date dataAtualizacao;
+    private String etapaAtual;
     private StatusInsntaciaEnum status;
 }

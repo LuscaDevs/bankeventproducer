@@ -62,6 +62,8 @@ public class Helper {
         document.put("idJornada", instancia.getIdJornada());
         document.put("dataCriacao", instancia.getDataCriacao());
         document.put("dataAtualizacao", instancia.getDataAtualizacao());
+        document.put("etapaAtual", instancia.getEtapaAtual());
+        document.put("idProduto", instancia.getIdProduto());
         document.append("status", instancia.getStatus().name()); // Converte o enum para string
 
         // Adicione outros campos conforme necessário
@@ -80,10 +82,12 @@ public class Helper {
         Instancia instancia = new Instancia();
 
         // Converte os campos do documento para a Instancia
-        instancia.setIdInstancia(document.getString("id"));
+        instancia.setIdInstancia(document.getString("idInstancia"));
         instancia.setIdJornada(document.getString("idJornada"));
         instancia.setDataCriacao(document.getDate("dataCriacao"));
         instancia.setDataAtualizacao(document.getDate("dataAtualizacao"));
+        instancia.setEtapaAtual(document.getString("etapaAtual"));
+        instancia.setIdProduto(document.getInteger("idProduto"));
 
         // Converte o campo "status" de string para o enum correspondente
         String statusString = document.getString("status");

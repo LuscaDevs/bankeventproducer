@@ -1,8 +1,6 @@
 package com.luscadevs.bankeventproducer.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,24 +19,24 @@ public class OrquestradorController {
     private OrquestradorService orquestradorService;
 
     @GetMapping("/start/{codProduto}")
-    public ResponseEntity<JornadaIniciada> start(@PathVariable int codProduto) {
+    public ResponseEntity<Object> start(@PathVariable int codProduto) {
         try {
             JornadaIniciada jornadaIniciada = orquestradorService.iniciarJornada(codProduto);
             return ResponseEntity.status(HttpStatus.CREATED).body(jornadaIniciada);
         } catch (Exception e) {
-            System.err.println("Error starting journey: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Erro ao iniciar jornada: " + e.getMessage());
         }
     }
 
     @GetMapping("/next/{idInstancia}")
-    public ResponseEntity<JornadaIniciada> next(@PathVariable String idInstancia) {
+    public ResponseEntity<Object> next(@PathVariable String idInstancia) {
         try {
-            // Implementar lógica para avançar para a próxima etapa da jornada
-            return ResponseEntity.status(HttpStatus.OK).build();
+            JornadaIniciada jornadaIniciada = orquestradorService.proximaEtapa(idInstancia);
+            return ResponseEntity.status(HttpStatus.OK).body(jornadaIniciada);
         } catch (Exception e) {
-            System.err.println("Error moving to next step: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro ao mover para próxima etapa: " + e.getMessage());
         }
     }
 

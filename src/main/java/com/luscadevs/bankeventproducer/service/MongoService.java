@@ -1,6 +1,7 @@
 package com.luscadevs.bankeventproducer.service;
 
 import com.luscadevs.bankeventproducer.model.Etapa;
+import com.luscadevs.bankeventproducer.model.Instancia;
 import com.luscadevs.bankeventproducer.model.Jornada;
 import com.luscadevs.bankeventproducer.model.Produto;
 import com.luscadevs.bankeventproducer.util.Helper;
@@ -82,6 +83,39 @@ public class MongoService {
         }
 
         return null; // Retorna null se o documento não for encontrado
+    }
+
+    /**
+     * Obtém uma instância específica pelo ID.
+     *
+     * @param instanciaId ID da instância.
+     * @return Objeto Instancia representando a instância, ou null se não
+     *         encontrado.
+     */
+    public Instancia getInstancia(String instanciaId) {
+        MongoCollection<Document> collection = getCollection("Instancias");
+
+        // Filtra pelo ID da instância
+        Document document = collection.find(new Document("idInstancia", instanciaId)).first();
+        {
+            return helper.convertDocumentToInstancia(document); // Retorna o documento encontrado
+        }
+    }
+
+    public void updateInstancia(Instancia instancia) {
+        MongoCollection<Document> collection = getCollection("Instancias");
+
+        // Converte a instância para um documento MongoDB
+        Document document = helper.convertInstanciaToDocument(instancia);
+
+        try {
+            // Atualiza o documento na coleção com base no ID da instância
+            collection.replaceOne(new Document("idInstancia", instancia.getIdInstancia()), document);
+            System.out.println("Instância atualizada com sucesso: " + instancia.getIdInstancia());
+        } catch (Exception e) {
+            System.err.println("Erro ao atualizar instância: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**

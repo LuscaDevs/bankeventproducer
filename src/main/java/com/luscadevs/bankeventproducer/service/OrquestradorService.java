@@ -1,7 +1,5 @@
 package com.luscadevs.bankeventproducer.service;
 
-import java.lang.annotation.Documented;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,8 +34,10 @@ public class OrquestradorService {
         Instancia instancia = new Instancia();
         instancia.setIdInstancia(jornadaIniciada.getIdInstancia());
         instancia.setIdJornada(jornada.getId());
+        instancia.setIdProduto(codProduto);
         instancia.setDataCriacao(new Date());
         instancia.setStatus(StatusInsntaciaEnum.EM_ANDAMENTO);
+        instancia.setEtapaAtual(jornadaIniciada.getEtapaAtual());
 
         Document document = new Document();
         document = helper.convertInstanciaToDocument(instancia);
@@ -46,6 +46,36 @@ public class OrquestradorService {
         mongoService.insertDocument("Instancias", document);
 
         return jornadaIniciada;
+    }
+
+    public JornadaIniciada proximaEtapa(String idInstancia) {
+        Instancia instancia = mongoService.getInstancia(idInstancia); // Obtém a instância atual
+        JornadaIniciada jornadaIniciada = new JornadaIniciada();
+        jornadaIniciada.setIdInstancia(instancia.getIdInstancia());
+
+        Jornada jornada = mongoService.getJornada(instancia.getIdProduto()); // Obtém a jornada associada à
+                                                                             // instância
+        List<Etapa> etapas = jornada.getEtapas(); // Obtém as etapas da jornada
+
+        int indiceAtual = -1;
+        for (int i = 0; i < etapas.size(); i++) {
+            if (etapas.get(i).getNome().equals(instancia.getEtapaAtual())) {
+                indiceAtual = i; // Encontra o índice da etapa atual
+                break;
+            }
+        }
+
+        if (indiceAtual != -1 && indiceAtual < etapas.size() - 1) {
+            String proximaEtapa = etapas.get(indiceAtual + 1).getNome(); // Obtém o nome da próxima etapa
+            System.out.println("Proxima etapa: " + proximaEtapa);
+            instancia.setEtapaAtual(proximaEtapa); // Atualiza a etapa atual na instância
+            mongoService.updateInstancia(instancia); // Atualiza a instância no banco de dados
+        } else {
+            throw new IllegalArgumentException("A instância já está na última etapa"); // Lança uma exceção do tipo 400
+        }
+
+        jornadaIniciada.setEtapaAtual(instancia.getEtapaAtual()); // Define a etapa atual na jornada iniciada
+        return jornadaIniciada; // Retorna a jornada iniciada com a próxima etapa
     }
 
     public List<Instancia> getInstanciasPorJornada(String idJornada) {

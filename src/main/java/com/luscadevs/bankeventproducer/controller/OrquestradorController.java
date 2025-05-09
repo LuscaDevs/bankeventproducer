@@ -40,8 +40,15 @@ public class OrquestradorController {
         }
     }
 
-    public String getMethodName(@RequestParam String param) {
-        return new String();
+    @GetMapping("/back/{idInstancia}")
+    public ResponseEntity<Object> back(@PathVariable String idInstancia) {
+        try {
+            JornadaIniciada jornadaIniciada = orquestradorService.etapaAnterior(idInstancia);
+            return ResponseEntity.status(HttpStatus.OK).body(jornadaIniciada);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro ao mover para etapa anterior: " + e.getMessage());
+        }
     }
 
     @GetMapping("/instancias/{idJornada}")

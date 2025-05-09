@@ -78,6 +78,37 @@ public class OrquestradorService {
         return jornadaIniciada; // Retorna a jornada iniciada com a próxima etapa
     }
 
+    public JornadaIniciada etapaAnterior(String idInstancia) {
+        Instancia instancia = mongoService.getInstancia(idInstancia); // Obtém a instância atual
+        JornadaIniciada jornadaIniciada = new JornadaIniciada();
+        jornadaIniciada.setIdInstancia(instancia.getIdInstancia());
+
+        Jornada jornada = mongoService.getJornada(instancia.getIdProduto()); // Obtém a jornada associada à
+                                                                             // instância
+        List<Etapa> etapas = jornada.getEtapas(); // Obtém as etapas da jornada
+
+        int indiceAtual = -1;
+        for (int i = 0; i < etapas.size(); i++) {
+            if (etapas.get(i).getNome().equals(instancia.getEtapaAtual())) {
+                indiceAtual = i; // Encontra o índice da etapa atual
+                break;
+            }
+        }
+
+        if (indiceAtual > 0) {
+            String etapaAnterior = etapas.get(indiceAtual - 1).getNome(); // Obtém o nome da etapa anterior
+            System.out.println("Etapa anterior: " + etapaAnterior);
+            instancia.setEtapaAtual(etapaAnterior); // Atualiza a etapa atual na instância
+            mongoService.updateInstancia(instancia); // Atualiza a instância no banco de dados
+        } else {
+            throw new IllegalArgumentException("A instância já está na primeira etapa"); // Lança uma exceção do tipo
+                                                                                         // 400
+        }
+
+        jornadaIniciada.setEtapaAtual(instancia.getEtapaAtual()); // Define a etapa atual na jornada iniciada
+        return jornadaIniciada; // Retorna a jornada iniciada com a etapa anterior
+    }
+
     public List<Instancia> getInstanciasPorJornada(String idJornada) {
         List<Instancia> instancias = new ArrayList<>();
 

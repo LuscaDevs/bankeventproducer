@@ -1,9 +1,7 @@
 package com.luscadevs.bankeventproducer.service;
 
-import com.luscadevs.bankeventproducer.model.Etapa;
 import com.luscadevs.bankeventproducer.model.Instancia;
 import com.luscadevs.bankeventproducer.model.Jornada;
-import com.luscadevs.bankeventproducer.model.Produto;
 import com.luscadevs.bankeventproducer.util.Helper;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -13,7 +11,6 @@ import com.mongodb.client.MongoDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bson.Document;
 import org.bson.UuidRepresentation;
@@ -97,9 +94,11 @@ public class MongoService {
 
         // Filtra pelo ID da instância
         Document document = collection.find(new Document("idInstancia", instanciaId)).first();
-        {
-            return helper.convertDocumentToInstancia(document); // Retorna o documento encontrado
+        if (document == null) {
+            throw new IllegalArgumentException("Instância não encontrada: " + instanciaId);
         }
+        return helper.convertDocumentToInstancia(document); // Retorna o documento encontrado
+
     }
 
     public void updateInstancia(Instancia instancia) {

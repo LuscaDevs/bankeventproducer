@@ -11,7 +11,7 @@ import com.luscadevs.bankeventproducer.model.JornadaIniciada;
 import com.luscadevs.bankeventproducer.service.OrquestradorService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 public class OrquestradorController {
@@ -48,6 +48,17 @@ public class OrquestradorController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Erro ao mover para etapa anterior: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/finalizar/{idInstancia}")
+    public ResponseEntity<Object> finalizar(@PathVariable String idInstancia) {
+        try {
+            String response = orquestradorService.finalizarJornada(idInstancia);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erro ao finalizar jornada: " + e.getMessage());
         }
     }
 

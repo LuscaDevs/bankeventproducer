@@ -1,7 +1,6 @@
 package com.luscadevs.bankeventproducer.util;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.bson.Document;
 import org.springframework.stereotype.Component;

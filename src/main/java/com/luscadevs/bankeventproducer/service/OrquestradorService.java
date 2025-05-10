@@ -109,6 +109,16 @@ public class OrquestradorService {
         return jornadaIniciada; // Retorna a jornada iniciada com a etapa anterior
     }
 
+    public String finalizarJornada(String idInstancia) {
+        Instancia instancia = mongoService.getInstancia(idInstancia); // Obtém a instância atual
+        if (instancia.getStatus() == StatusInsntaciaEnum.FINALIZADA) {
+            throw new IllegalArgumentException("Instância já está finalizada"); // Lança uma exceção do tipo 400
+        }
+        instancia.setStatus(StatusInsntaciaEnum.FINALIZADA); // Atualiza o status da instância para finalizada
+        mongoService.updateInstancia(instancia); // Atualiza a instância no banco de dados
+        return "Jornada finalizada com sucesso"; // Retorna mensagem de sucesso
+    }
+
     public List<Instancia> getInstanciasPorJornada(String idJornada) {
         List<Instancia> instancias = new ArrayList<>();
 
